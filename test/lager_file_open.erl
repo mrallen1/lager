@@ -12,14 +12,14 @@ one_of(L) when is_list(L) ->
 one_of(_) -> error(bad_arg).
 
 file_open_test() ->
-    file_open(10).
+    ?debugMsg("Removing files"),
+    os:cmd("rm -rf test[0-5]"),
+    timer:sleep(10),
+    ok = file_open(10).
 
 file_open(0) ->
     ok;
 file_open(N) ->
-    ?debugMsg("Removing files"),
-    os:cmd("rm -rf test[0-5]"),
-    timer:sleep(10),
     ?debugFmt("Test run: ~p~n", [N]),
     D = one_of(?DIRNAMES),
     F = one_of(?FILENAMES),
@@ -45,5 +45,5 @@ write(_FD, 0) ->
 write(FD, N) ->
     ?debugFmt("Writing message ~p", [N]),
     M = "This is message " ++ integer_to_list(N) ++ "\n",
-    ok = io:write(FD, list_to_binary(M)),
+    ok = file:write(FD, list_to_binary(M)),
     write(FD, N - 1).
